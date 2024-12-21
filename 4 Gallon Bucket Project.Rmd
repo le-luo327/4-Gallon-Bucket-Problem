@@ -1,0 +1,103 @@
+---
+title: "4 Gallon Bucket Project"
+author: "Le Luo"
+date: "2024-11-29"
+output: pdf_document
+---
+The objective of this project is to develop a program that can solve the problem of
+2 kids fetching 4 gallons of water from a stream, using only an unmarked 3-gallon
+bucket, and an unmarked 5-gallon bucket, in less than 15 steps.
+
+Solution 1: fill the 3-gallon bucket first
+```{r}
+four_gallon_bucket <- function() {
+  capacity_3 <- 3
+  capacity_5 <- 5
+  target <- 4
+  steps <- list()
+  buckets <- c(0, 0)  #at the beginning
+  steps[[1]] <- buckets
+
+  step_count <- 0
+
+  while (TRUE) {
+    if (step_count >= 15) {
+      cat("Exceed 15 steps, stop.\n")
+      break
+    }
+
+    if (buckets[2] == target) {
+      break
+    }
+
+    if (buckets[1] == 0) { # If the 3-gallon bucket is empty, then:
+      buckets <- c(capacity_3, buckets[2]) # Fill the 3-gallon bucket
+    } else if (buckets[2] < capacity_5) { # If the 5-gallon bucket is not full, then:
+      pour_amount <- min(buckets[1], capacity_5 - buckets[2])  # Amount to be poured from 3-gallon to 5-gallon bucket
+      buckets <- c(buckets[1] - pour_amount, buckets[2] + pour_amount) # Pour from 3-gallon to 5-gallon so fill the 5-gallon
+    } else if (buckets[2] == capacity_5) { # If the 5-gallon is full, then:
+      buckets <- c(buckets[1], 0) # Empty the 5-gallon bucket
+    }
+
+    steps[[length(steps) + 1]] <- buckets
+  }
+
+  if (buckets[2] == target) {
+    for (i in seq_along(steps)) {
+      cat(sprintf("Step %d: (3-gallon: %d, 5-gallon: %d)\n", i, steps[[i]][1], steps[[i]][2]))
+    }
+  } else {
+    cat("Cannot solve within 15 steps.\n")}
+}
+
+four_gallon_bucket()
+```
+
+Solution 2: fill the 5-gallon bucket first
+```{r}
+four_gallon_bucket <- function() {
+  capacity_3 <- 3
+  capacity_5 <- 5
+  target <- 4
+  steps <- list()
+  buckets <- c(0, 0) 
+  steps[[1]] <- buckets
+
+  step_count <- 0
+
+  while (TRUE) {
+    if (step_count >= 15) {
+      cat("Exceeded 15 steps, terminating.\n")
+      break
+    }
+
+   if (buckets[2] == target) {
+    if (buckets[1] > 0) {
+        buckets <- c(0, buckets[2]) 
+        steps[[length(steps) + 1]] <- buckets
+    }
+    break
+}
+
+    if (buckets[2] == 0) { # If the 5-gallon bucket is empty, then:
+      buckets <- c(buckets[1], capacity_5) # Fill the 5-gallon bucket
+    } else if (buckets[1] < capacity_3) { # If the 3-gallon bucket is not full, then:
+      pour_amount <- min(capacity_3 - buckets[1],buckets[2]) # Amount to be poured from 5-gallon to 3-gallon bucket
+      buckets <- c(buckets[1] + pour_amount, buckets[2] - pour_amount) # Pour from 5-gallon to fill 3-gallon bucket
+    } else if (buckets[1] == capacity_3) { # If the 3-gallon bucket is full, then:
+      buckets <- c(0, buckets[2]) # Empty the 3-gallon bucket
+    }
+  steps[[length(steps) + 1]] <- buckets
+  }
+
+  if (buckets[2] == target) {
+    for (i in seq_along(steps)) {
+      cat(sprintf("Step %d: (3-gallon: %d, 5-gallon: %d)\n", i, steps[[i]][1], steps[[i]][2]))
+    }
+  } else {
+    cat("Could not solve within 15 steps.\n")
+  }
+}
+
+four_gallon_bucket()
+```
